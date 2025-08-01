@@ -1,53 +1,52 @@
-# Vamos a importar NLTK (Natural Language Toolkit) que nos va a ayudar a trabajar con lenguaje natural
 import nltk
-nltk.download('punkt_tab')
-# Definir la ruta donde se almacenarán los datos descargados de NLTK
-nltk.data.path.append(r'C:\Users\dipul\AppData\Roaming\nltk_data')
+import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from collections import Counter
+import string
 
-# Descargamos la lista de palabras vacías stopwords que son palabras comunes como el, la, los, etc.
+# Descargar recursos de NLTK (solo una vez)
+nltk.download('punkt')
 nltk.download('stopwords')
 
-# Importar la función que divide un texto en palabras
-from nltk.tokenize import word_tokenize
+# Simulación de mensajes de alerta de servidores
+alertas = [
+    "Error: Connection timeout on server 01.",
+    "Warning: High CPU usage on server 02.",
+    "Critical: Disk space full on server 03.",
+    "Error: Database connection failed.",
+    "Alert: Memory leak detected in process.",
+    "Warning: Unusual traffic detected.",
+    "Error: Authentication failed.",
+    "Critical: Service not responding.",
+    "Notice: Scheduled maintenance completed."
+]
 
-# Importar la lista de palabras vacías stopwords en español
-from nltk.corpus import stopwords
+# Unir todos los textos en un solo corpus
+texto = " ".join(alertas).lower()
 
-# Imporar la herramienta para calcular la frecuencia de palabras en un texto
-from nltk.probability import FreqDist
+# Tokenización y limpieza
+tokens = word_tokenize(texto)
+tokens_limpios = [word for word in tokens if word.isalpha()]  # solo palabras (sin puntuación)
 
-# Definimos un texto en español que queramos analizar
+# Eliminar stopwords en inglés
+stop_words = set(stopwords.words('english'))
+tokens_filtrados = [word for word in tokens_limpios if word not in stop_words]
 
-texto = """
-somos el equipo 16
-Integrantes:
-- Diego M Pulgarin : Ingeniero Electronico
-- Gustavo Wehdeking : Ingeniero Sistemas
-- Esmeralda Lemus : Profesora   
-- Oscar Rueda : Profesor
+# Contar palabras frecuentes
+frecuencias = Counter(tokens_filtrados)
 
-"""
+# Mostrar las 10 palabras más comunes
+print("Palabras más frecuentes:")
+for palabra, freq in frecuencias.most_common(10):
+    print(f"{palabra}: {freq}")
 
-# Tokenización: Convertimos el texto en una lista de palabras individuales
-palabras = word_tokenize(texto, language= 'spanish')
-
-# Mostramos la lista de palabras obtenidas
-print(palabras)
-
-# Obtenemos la lista de palabras vacías en español, es decir, cargamos las stopwords en español. Aquí obtenemos una lista de palabras comunes en español que normalmente no necesistamos para el análisis. 
-stop_words = set(stopwords.words('spanish'))
-
-# Filtramos las palabras: eliminamos las stopwords y los signos de puntuación
-# Recorremos cada palabra en una lista llamada palabras. Si la palabra no está en las stopwords y es una palabra real (sin números ni símbolos), la guardamos.
-
-palabras_filtradas = [palabras for palabras in palabras if palabras.lower() not in stop_words and palabras.isalpha()]
-
-# Mostramos la lista de palabras después del filtrado.
-# Resultado: Nos quedamos solo con las palabras importantes.
-print(palabras_filtradas)
-
-# Calculamos la frecuencia de cada palabra en la lista filtrada
-frecuencia_de_las_palabras = FreqDist(palabras_filtradas)
-
-# Mostramos las 10 palabras más comunes y la cantidad de veces que aparecen
-print(frecuencia_de_las_palabras.most_common(10))
+# Visualización
+plt.figure(figsize=(10,5))
+plt.bar(*zip(*frecuencias.most_common(10)), color='skyblue')
+plt.title('Palabras más frecuentes en mensajes de alerta')
+plt.xlabel('Palabras')
+plt.ylabel('Frecuencia')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
