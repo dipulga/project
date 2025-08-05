@@ -1,49 +1,100 @@
-# Vamos a importar NLTK (Natural Language Toolkit) que nos va a ayudar a trabajar con lenguaje natural
-import nltk
-nltk.download('punkt_tab')
-# Definir la ruta donde se almacenarán los datos descargados de NLTK
-nltk.data.path.append(r'C:\Users\dipul\AppData\Roaming\nltk_data')
-
-# Descargamos la lista de palabras vacías stopwords que son palabras comunes como el, la, los, etc.
-nltk.download('stopwords')
-
-# Importar la función que divide un texto en palabras
-from nltk.tokenize import word_tokenize
-
-# Importar la lista de palabras vacías stopwords en español
-from nltk.corpus import stopwords
-
-# Imporar la herramienta para calcular la frecuencia de palabras en un texto
-from nltk.probability import FreqDist
-
-# Definimos un texto en español que queramos analizar
-
-texto = """
-¿Cómo funciona la IA?
-Las Inteligencias artificiales utilizan algoritmos y modelos matemáticos para procesar grandes cantidades de datos y tomar decisiones basadas en patrones y reglas establecidas a través del aprendizaje automático, que es la capacidad de una máquina para aprender de forma autónoma a partir de datos sin ser programada específicamente para hacerlo. De esta manera la IA puede mejorar su precisión y eficiencia con el tiempo.
-Espero que esta información sobre la IA sea de gran apoyo para su formación y aprendizaje.
+"""
+Imagina que esta API es una biblioteca de películas:
+La función load_movies() es como un bibliotecario que carga el catálogo de libros (peliculas) cuando se abre la biblioteca.
+La función get_movies() muestra todo el catálogo cuando alguien lo pide.
+La función get_movie(id) es como si alguien preguntara por un libro específico por su código de identificación.
+La función chatbot (query) es un asistente que busca libros según palabras clave y sinónimo.
+La función get_movies_by_category (cagory) ayuda a encontrar películas según su género (acción, comedia, etc.).
 """
 
-# Tokenización: Convertimos el texto en una lista de palabras individuales
-palabras = word_tokenize(texto, language= 'spanish')
+# Importamos las herramientas necesarias para contruir nuestra API
+from fastapi import FastAPI, HTTPException # FastAPI nos ayuda a crear la API, HTTPException maneja errores.
+from fastapi.responses import HTMLResponse, JSONResponse # HTMLResponse para páginas web, JSONResponse para respuestas en formato JSON. 
+import pandas as pd # Pandas nos ayuda a manejar datos en tablasm como si fuera un Excel.
+import nltk # NLTK es una librería para procesar texto y analizar palabras. 
+from nltk.tokenize import word_tokenize # Se usa para dividir un texto en palabras individuales.
+from nltk.corpus import wordnet # Nos ayuda a encontrar sinonimos de palabras. 
 
-# Mostramos la lista de palabras obtenidas
-print(palabras)
+# Indicamos la ruta donde NLTK buscará los datos descargados en nuestro computador. 
+nltk.data.path.append('C:\\Users\\dipul\\AppData\\Roaming\\nltk_data')
 
-# Obtenemos la lista de palabras vacías en español, es decir, cargamos las stopwords en español. Aquí obtenemos una lista de palabras comunes en español que normalmente no necesistamos para el análisis. 
-stop_words = set(stopwords.words('spanish'))
+# Descargamos las herramientas necesarias de NLTK para el análisis de palabras.
 
-# Filtramos las palabras: eliminamos las stopwords y los signos de puntuación
-# Recorremos cada palabra en una lista llamada palabras. Si la palabra no está en las stopwords y es una palabra real (sin números ni símbolos), la guardamos.
+nltk.download('punkt') # Paquete para dividir frases en palabras.
+nltk.download('wordnet') # Paquete para encontrar sinonimos de palabras en inglés.
 
-palabras_filtradas = [palabras for palabras in palabras if palabras.lower() not in stop_words and palabras.isalpha()]
+# Función para cargar las películas desde un archivo CSV
 
-# Mostramos la lista de palabras después del filtrado.
-# Resultado: Nos quedamos solo con las palabras importantes.
-print(palabras_filtradas)
+def load_movies():
+    # Leemos el archivo que contiene información de películas y seleccionamos las columnas más importantes
+    df = pd.read_csv("dataset/netflix_titles.csv")[['show_id', 'title', 'release_year', 'listed_in', 'rating', 'description']]
+    
+    # Renombramos las columnas para que sean más faciles de entender
+    df.columns = ['id', 'title', 'year', 'category', 'rating', 'overview']
+    
+    # Llenamos los espacios vacíos con texto vacío y convertimos los datos en una lista de diccionarios 
+    return df.fillna('').to_dict(orient='records')
 
-# Calculamos la frecuencia de cada palabra en la lista filtrada
-frecuencia_de_las_palabras = FreqDist(palabras_filtradas)
+# Cargamos las películas al iniciar la API para no leer el archivo cada vez que alguien pregunte por ellas.
+movies_list = load_movies()
 
-# Mostramos las 10 palabras más comunes y la cantidad de veces que aparecen
-print(frecuencia_de_las_palabras.most_common(10))
+# Función para encontrar sinónimos de una palabra
+
+def get_synonyms(word): 
+    # Usamos WordNet para obtener distintas palabras que significan lo mismo.
+    return{lemma.name().lower() for syn in wordnet.synsets(word) for lemma in syn.lemmas()}
+
+# Creamos la aplicación FastAPI, que será el motor de nuestra API
+# Esto inicializa la API con un nombre y una versión
+app = FastAPI(title="Mi aplicación de Películas", version="1.0.0")
+
+# Ruta de inicio: Cuando alguien entra a la API sin especificar nada, verá un mensaje de bienvenida.
+
+@app.get('/', tags=['Home'])
+def home():
+# Cuando entremos en el navegador a http://127.0.0.1:8000/ veremos un mensaje de bienvenida
+    return HTMLResponse('<h1>Bienvenido a la API de Películas</h1>')
+
+# Obteniendo la lista de películas
+# Creamos una ruta para obtener todas las películas
+
+# Ruta para obtener todas las películas disponibles
+
+@app.get('/movies', tags=['Movies'])
+def get_movies():
+    # Si hay películas, las enviamos, si no, mostramos un error
+    return movies_list or HTTPException(status_code=500, detail="No hay datos de películas disponibles")
+
+
+# Ruta para obtener una película específica según su ID
+@app.get('/movies/{id}', tags=['Movies'])
+def get_movie(id: str):
+    # Buscamos en la lista de películas la que tenga el mismo ID
+    return next((m for m in movies_list if m['id'] == id), {"detalle": "película no encontrada"})
+
+# Ruta del chatbot que responde con películas según palabras clave de la categoría
+
+@app.get('/chatbot', tags=['Chatbot'])
+def chatbot(query: str):
+    # Dividimos la consulta en palabras clave, para entender mejor la intención del usuario
+    query_words = word_tokenize(query.lower())
+    
+    # Buscamos sinónimos de las palabras clave para ampliar la búsqueda
+    synonyms = {word for q in query_words for word in get_synonyms(q)} | set(query_words)
+    
+    # Filtramos la lista de películas buscando coincidencias en la categoría
+    results = [m for m in movies_list if any (s in m['category'].lower() for s in synonyms)]
+    
+    # Si encontramos películas, enviamos la lista; si no, mostramos un mensaje de que no se encontraron coincidencias
+    
+    return JSONResponse (content={
+        "respuesta": "Aquí tienes algunas películas relacionadas." if results else "No encontré películas en esa categoría.",
+        "películas": results
+    })
+    
+# Ruta para buscar películas por categoría específica
+
+@app.get ('/movies/by_category/', tags=['Movies'])
+def get_movies_by_category(category: str):
+    # Filtramos la lista de películas según la categoría ingresada
+    return [m for m in movies_list if category.lower() in m['category'].lower()]
