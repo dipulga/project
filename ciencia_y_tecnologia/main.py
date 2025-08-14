@@ -27,7 +27,7 @@ nltk.download('wordnet') # Paquete para encontrar sinonimos de palabras en ingl�
 
 def load_movies():
     # Leemos el archivo que contiene información de películas y seleccionamos las columnas más importantes
-    df = pd.read_csv("dataset/libro1.csv")[['Customer','Customer_Code','Node','IP_Address','Component','Serial','AlertKey','Description','First_Occurrence_Date','Last_Occurrence_Date','Solution_Date','Mainatenance_Window','Manager','Agent','AlertGroup','Original_Severity','WMFLAG','Server_name','ADO','TicketGroup','TicketNumber','AmTicket','Operative_System','Identifier','Serial']]
+    df = pd.read_csv("Dataset/Alerts_report.csv")[['Customer','Customer_Code','Node','IP_Address','Component','Serial','AlertKey','Description','First_Occurrence_Date','Last_Occurrence_Date','Solution_Date','Mainatenance_Window','Manager','Agent','AlertGroup','Original_Severity','WMFLAG','Server_name','ADO','TicketGroup','TicketNumber','AmTicket','Operative_System','Identifier','Serial']]
     
     # Renombramos las columnas para que sean más faciles de entender
     df.columns = ['Customer', 'Customer_Code', 'Node', 'IP_Address', 'Component', 'Serial', 'AlertKey', 'Description', 'First_Occurrence_Date', 'Last_Occurrence_Date', 'Solution_Date', 'Mainatenance_Window', 'Manager', 'Agent', 'AlertGroup', 'Original_Severity', 'WMFLAG', 'Server_name', 'ADO', 'TicketGroup', 'TicketNumber', 'AmTicket', 'Operative_System', 'Identifier', 'Serial']
