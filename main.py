@@ -16,7 +16,7 @@ from nltk.tokenize import word_tokenize # Se usa para dividir un texto en palabr
 from nltk.corpus import wordnet # Nos ayuda a encontrar sinonimos de palabras. 
 
 # Indicamos la ruta donde NLTK buscará los datos descargados en nuestro computador. 
-nltk.data.path.append('C:\\Users\\dipul\\AppData\\Roaming\\nltk_data')
+nltk.data.path.append(r'C:\\Users\\dipul\\AppData\\Roaming\\nltk_data')
 
 # Descargamos las herramientas necesarias de NLTK para el análisis de palabras.
 
@@ -46,14 +46,14 @@ def get_synonyms(word):
 
 # Creamos la aplicación FastAPI, que será el motor de nuestra API
 # Esto inicializa la API con un nombre y una versión
-app = FastAPI(title="Mi aplicación de Películas", version="1.0.0")
+app = FastAPI(title="aplicación de Películas de Diego Pulgarin", version="1.0.0")
 
 # Ruta de inicio: Cuando alguien entra a la API sin especificar nada, verá un mensaje de bienvenida.
 
 @app.get('/', tags=['Home'])
 def home():
-# Cuando entremos en el navegador a http://127.0.0.1:8000/ veremos un mensaje de bienvenida
-    return HTMLResponse('<h1>Bienvenido a la API de Películas</h1>')
+# Cuando entremos en el navegador a /http://127.0.0.1:8000 veremos un mensaje de bienvenida
+    return HTMLResponse('<h1>Bienvenido a la API de Películas De Diego Pulgarin</h1>')
 
 # Obteniendo la lista de películas
 # Creamos una ruta para obtener todas las películas

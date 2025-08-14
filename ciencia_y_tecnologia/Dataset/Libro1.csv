@@ -1,0 +1,21 @@
+﻿id_alerta;fecha;servidor;ip;tipo_alerta;criticidad;mensaje;estado
+1;13/08/2025 10:02;srv-web01;10.230.2.46;HTTP;Alta;Tiempo de respuesta excede 5 segundos;Abierta
+2;13/08/2025 10:04;srv-db01;10.230.2.51;CPU;Crítica;Uso de CPU por encima del 95%;En progreso
+3;13/08/2025 10:06;srv-mail01;10.230.2.56;Memoria;Media;Uso de memoria superior al 80%;Abierta
+4;13/08/2025 10:08;srv-app01;10.230.2.61;HTTP;Alta;Servicio no responde (Connection timed out);Abierta
+5;13/08/2025 10:10;srv-proxy01;10.230.2.66;Red;Alta;Pérdida de paquetes del 15%;En progreso
+6;13/08/2025 10:12;srv-web02;10.230.2.71;HTTP;Baja;Certificado SSL próximo a expirar;Resuelta
+7;13/08/2025 10:14;srv-db02;10.230.2.76;Disco;Crítica;Espacio en disco por debajo del 5%;Abierta
+8;13/08/2025 10:16;srv-backup01;10.230.2.81;Backup;Media;Última copia de seguridad fallida;En progreso
+9;13/08/2025 10:18;srv-app02;10.230.2.86;HTTP;Alta;Código de estado HTTP 500 detectado;Abierta
+10;13/08/2025 10:20;srv-web03;10.230.2.91;Red;Media;Latencia promedio superior a 200ms;Resuelta
+11;13/08/2025 10:22;srv-web01;10.230.2.46;CPU;Alta;Uso de CPU por encima del 95%;Abierta
+12;13/08/2025 10:24;srv-db01;10.230.2.51;HTTP;Alta;Tiempo de respuesta excede 5 segundos;En progreso
+13;13/08/2025 10:26;srv-mail01;10.230.2.56;Memoria;Crítica;Uso de memoria superior al 80%;Abierta
+14;13/08/2025 10:28;srv-app01;10.230.2.61;Disco;Alta;Espacio en disco por debajo del 5%;Abierta
+15;13/08/2025 10:30;srv-proxy01;10.230.2.66;Red;Baja;Latencia promedio superior a 200ms;Resuelta
+16;13/08/2025 10:32;srv-web02;10.230.2.71;HTTP;Crítica;Servicio no responde (Connection timed out);En progreso
+17;13/08/2025 10:34;srv-db02;10.230.2.76;Backup;Media;Última copia de seguridad fallida;Resuelta
+18;13/08/2025 10:36;srv-backup01;10.230.2.81;Disco;Crítica;Espacio en disco por debajo del 5%;Abierta
+19;13/08/2025 10:38;srv-app02;10.230.2.86;CPU;Alta;Uso de CPU por encima del 95%;En progreso
+20;13/08/2025 10:40;srv-web03;10.230.2.91;HTTP;Alta;Tiempo de respuesta excede 5 segundos;Abierta
